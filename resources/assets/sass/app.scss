@@ -1,0 +1,126 @@
+
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+// @import '~bootstrap/scss/bootstrap';
+
+.navbar-laravel {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.light {
+    background: white;
+}
+
+body {
+    background: #011E33 !important;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+    color: white;
+}
+
+.q-btn-inner {
+    text-align: center;
+    margin: 0 auto;
+}
+
+nav {
+    color: #011E33;
+}
+
+.nav-link{
+    color: white !important;
+}
+
+.nav-link:hover, .nav-link:active{
+    color: #011E33 !important;
+}
+
+.navbar-brand, .navbar-toggler, .nav-item {
+    color: #011E33;
+}
+
+.btn-primary{
+    background: #011E33 !important;
+    color: white !important;
+}
+
+.btn-primary:hover, .navbar-nav-active .btn-primary{
+    background: #E2182D !important;
+    color: white !important;
+    border: none;
+    border-radius: 0;
+}
+
+.square {
+    border:none;
+    border-radius: 0;
+}
+
+.btn-square:hover, .btn-square:active {
+    border: none;
+    border-radius: 0;
+}
+
+.dropdown-toggle:focus {
+    border: none;
+    border-radius: 0;
+    background: #E2182D !important;
+    box-shadow: 0 0 0 0 !important;
+}
+
+.dropdown-menu {
+    background: #E2182D !important;
+}
+
+.q-stepper-step-content, .q-stepper-title {
+    color: white !important;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.q-stepper-step-inner {
+    background: white !important;
+    color: #011E33 !important;
+}
+
+.q-stepper-step-inner h4 {
+    color: #011E33 !important;
+}
+
+.categories tr td {
+    text-align: left;
+    min-width: 120px;
+}
+
+.center {
+    text-align: center;
+}
+
+.title {
+    width: 20rem;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.description {
+    width: 55rem;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
+
