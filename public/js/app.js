@@ -37841,11 +37841,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'app',
-
+    props: ['author'],
     data: function data() {
         return {
             title: '',
-            author_id: '',
+            author_id: this.author,
             readed: 0,
             published: 0,
             description: '',
@@ -37867,17 +37867,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             green: true,
             red: false,
             step1: true,
-            step2: true
+            step2: true,
+            counter: 0,
+            disable: false
         };
     },
 
 
     methods: {
-        categoryChecker: function categoryChecker() {
-            // foreach('input:checkbox'){
-
-            // }
-        },
+        /* changing status of button from the 1 Step to 2 Step */
         checkStep1: function checkStep1() {
             if (this.title.length == 0 || this.description.length == 0) {
                 return this.step1 = true;
@@ -37885,8 +37883,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return this.step1 = false;
             }
         },
+
+        /* changing status of button from the 2 Step to 3 Step */
+        checkStep2: function checkStep2() {
+            if (this.count3 >= 3) {
+                return this.step2 = true;
+            } else {
+                return this.step2 = false;
+            }
+        },
+
+        /* counting signs in the description field*/
         descriptionCount: function descriptionCount() {
-            /* sprawdzenie ilości wpisanych znaków w opisie */
             this.checkStep1();
             if (this.description.length < 1000) {
                 this.green = true;
@@ -37899,8 +37907,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return this.count1 = 1000 - this.description.length;
             }
         },
+
+        /* counting signs in the title field*/
         titleCount: function titleCount() {
-            /* sprawdzenie ilości wpisanych znaków w opisie */
             this.checkStep1();
             if (this.title.length < 100) {
                 this.green = true;
@@ -37912,6 +37921,64 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.red = true;
                 return this.count2 = 100 - this.title.length;
             }
+        },
+
+        /* checking what category is selected and let select just 3 of them */
+        categoryChecker: function categoryChecker() {
+
+            if (this.count3 >= 0) {
+                this.counter = 0;
+
+                if (this.comedy == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.for_kids == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.fantasy == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.history == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.moral == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.philosophy == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.religious == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.report == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.romance == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.thriller == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.youth == '1') {
+                    this.counter = this.counter + 1;
+                }
+                this.count3 = 3 - this.counter;
+                this.checkStep2();
+                return this.count3;
+            }
+        },
+        onSubmit: function onSubmit() {
+            var _this = this;
+
+            axios.post('/books', this.$data).then(function (response) {
+                return window.location = "/books";
+            }).catch(function (error) {
+                return _this.$q.notify({
+                    icon: 'warning',
+                    message: 'Something is wrong...',
+                    timeout: 0
+                });
+            });
         }
     }
 });
@@ -37925,563 +37992,588 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("form", { attrs: { method: "post", action: "/books" } }, [
-      _c(
-        "div",
-        { attrs: { "data-ride": "carousel", "data-interval": "false" } },
-        [
-          _c(
-            "q-stepper",
-            { ref: "stepper" },
-            [
-              _c(
-                "q-step",
-                {
-                  attrs: {
-                    default: "",
-                    title: "Krok 1:",
-                    subtitle: "Zaczynamy!"
-                  }
-                },
-                [
-                  _c("h4", [_vm._v("Step 1")]),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "form-group" },
-                    [
-                      _c("label", { attrs: { for: "Title" } }, [
-                        _vm._v("Title")
-                      ]),
-                      _vm._v(" "),
-                      _c("p", [
-                        _vm._v(
-                          "A good title catches the eye. Think carefully, content of your book can be readed by someone, but title will be readed by everyone... You have "
-                        ),
-                        _c(
-                          "span",
-                          {
-                            staticClass: "count2",
-                            class: { green: _vm.green, red: _vm.red }
+    _c(
+      "form",
+      {
+        attrs: { method: "post", action: "/books" },
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+            return _vm.onSubmit($event)
+          }
+        }
+      },
+      [
+        _c(
+          "div",
+          { attrs: { "data-ride": "carousel", "data-interval": "false" } },
+          [
+            _c(
+              "q-stepper",
+              { ref: "stepper" },
+              [
+                _c(
+                  "q-step",
+                  {
+                    attrs: {
+                      default: "",
+                      title: "Krok 1:",
+                      subtitle: "Zaczynamy!"
+                    }
+                  },
+                  [
+                    _c("h4", [_vm._v("Step 1")]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "form-group" },
+                      [
+                        _c("label", { attrs: { for: "Title" } }, [
+                          _vm._v("Title")
+                        ]),
+                        _vm._v(" "),
+                        _c("p", [
+                          _vm._v(
+                            "A good title catches the eye. Think carefully, content of your book can be readed by someone, but title will be readed by everyone... You have "
+                          ),
+                          _c(
+                            "span",
+                            {
+                              staticClass: "count2",
+                              class: { green: _vm.green, red: _vm.red }
+                            },
+                            [_vm._v(_vm._s(_vm.count2))]
+                          ),
+                          _vm._v(" signs for it.")
+                        ]),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("q-input", {
+                          staticClass: "title center",
+                          attrs: {
+                            "float-label": "title",
+                            id: "title",
+                            name: "title",
+                            maxlength: "100"
                           },
-                          [_vm._v(_vm._s(_vm.count2))]
-                        ),
-                        _vm._v(" signs for it.")
-                      ]),
-                      _c("br"),
-                      _vm._v(" "),
-                      _c("q-input", {
-                        staticClass: "title center",
-                        attrs: {
-                          "float-label": "title",
-                          id: "title",
-                          name: "title",
-                          maxlength: "100"
-                        },
-                        on: { keyup: _vm.titleCount, change: _vm.checkStep1 },
-                        model: {
-                          value: _vm.title,
-                          callback: function($$v) {
-                            _vm.title = $$v
-                          },
-                          expression: "title"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("span", {
-                        staticClass: "glyphicon",
-                        attrs: {
-                          id: "helpblock",
-                          "aria-hidden": "true",
-                          "font-size": "12"
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "form-group" },
-                    [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.author_id,
-                            expression: "author_id"
+                          on: { keyup: _vm.titleCount, change: _vm.checkStep1 },
+                          model: {
+                            value: _vm.title,
+                            callback: function($$v) {
+                              _vm.title = $$v
+                            },
+                            expression: "title"
                           }
-                        ],
-                        attrs: {
-                          type: "hidden",
-                          name: "author_id",
-                          value: "WSTAW TU ID AUTORA!!!"
-                        },
-                        domProps: { value: _vm.author_id },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                        }),
+                        _vm._v(" "),
+                        _c("span", {
+                          staticClass: "glyphicon",
+                          attrs: {
+                            id: "helpblock",
+                            "aria-hidden": "true",
+                            "font-size": "12"
+                          }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "form-group" },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.readed,
+                              expression: "readed"
                             }
-                            _vm.author_id = $event.target.value
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.readed,
-                            expression: "readed"
-                          }
-                        ],
-                        attrs: { type: "hidden", name: "readed", value: "0" },
-                        domProps: { value: _vm.readed },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                          ],
+                          attrs: { type: "hidden", name: "readed", value: "0" },
+                          domProps: { value: _vm.readed },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.readed = $event.target.value
                             }
-                            _vm.readed = $event.target.value
                           }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.published,
-                            expression: "published"
-                          }
-                        ],
-                        attrs: {
-                          type: "hidden",
-                          name: "published",
-                          value: "0"
-                        },
-                        domProps: { value: _vm.published },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                        }),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.published,
+                              expression: "published"
                             }
-                            _vm.published = $event.target.value
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("label", { attrs: { for: "description" } }, [
-                        _vm._v("Description")
-                      ]),
-                      _vm._v(" "),
-                      _c("p", [
-                        _vm._v(
-                          "Think twice. This description can bring you more readers... or take them away. Max: "
-                        ),
-                        _c(
-                          "span",
-                          {
-                            staticClass: "count1",
-                            class: { green: _vm.green, red: _vm.red }
+                          ],
+                          attrs: {
+                            type: "hidden",
+                            name: "published",
+                            value: "0"
                           },
-                          [_vm._v(_vm._s(_vm.count1))]
-                        )
-                      ]),
-                      _c("br"),
-                      _vm._v(" "),
-                      _c("q-input", {
-                        staticClass: "description",
-                        attrs: {
-                          type: "textarea",
-                          "float-label": "description",
-                          rows: "10",
-                          maxlength: "1000"
-                        },
-                        on: {
-                          keyup: _vm.descriptionCount,
-                          change: _vm.checkStep1
-                        },
-                        model: {
-                          value: _vm.description,
-                          callback: function($$v) {
-                            _vm.description = $$v
-                          },
-                          expression: "description"
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "q-stepper-navigation",
-                    [
-                      _c("q-btn", {
-                        attrs: {
-                          color: "secondary",
-                          disable: _vm.step1,
-                          label: "Continue"
-                        },
-                        on: {
-                          click: function($event) {
-                            _vm.$refs.stepper.next()
+                          domProps: { value: _vm.published },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.published = $event.target.value
+                            }
                           }
-                        }
-                      })
-                    ],
-                    1
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "q-step",
-                { attrs: { title: "Krok 2:" } },
-                [
-                  _c("h2", [_vm._v("Step 2")]),
+                        }),
+                        _vm._v(" "),
+                        _c("label", { attrs: { for: "description" } }, [
+                          _vm._v("Description")
+                        ]),
+                        _vm._v(" "),
+                        _c("p", [
+                          _vm._v(
+                            "Think twice. This description can bring you more readers... or take them away. Max: "
+                          ),
+                          _c(
+                            "span",
+                            {
+                              staticClass: "count1",
+                              class: { green: _vm.green, red: _vm.red }
+                            },
+                            [_vm._v(_vm._s(_vm.count1))]
+                          )
+                        ]),
+                        _c("br"),
+                        _vm._v(" "),
+                        _c("q-input", {
+                          staticClass: "description",
+                          attrs: {
+                            type: "textarea",
+                            "float-label": "description",
+                            rows: "10",
+                            maxlength: "1000"
+                          },
+                          on: {
+                            keyup: _vm.descriptionCount,
+                            change: _vm.checkStep1
+                          },
+                          model: {
+                            value: _vm.description,
+                            callback: function($$v) {
+                              _vm.description = $$v
+                            },
+                            expression: "description"
+                          }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "q-stepper-navigation",
+                      [
+                        _c("q-btn", {
+                          attrs: {
+                            color: "secondary",
+                            disable: _vm.step1,
+                            label: "Continue"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.$refs.stepper.next()
+                            }
+                          }
+                        })
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "q-step",
+                  { attrs: { title: "Krok 2:" } },
+                  [
+                    _c("h2", [_vm._v("Step 2")]),
+                    _vm._v(" "),
+                    _c("p", [
+                      _vm._v(
+                        "Choose categories, which will describe your book: "
+                      ),
+                      _c(
+                        "span",
+                        {
+                          staticClass: "count3",
+                          class: { green: _vm.green, red: _vm.red }
+                        },
+                        [_vm._v(_vm._s(_vm.count3))]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "table",
+                        {
+                          staticClass: "categories center",
+                          attrs: { align: "center" }
+                        },
+                        [
+                          _c("tr", { staticClass: "center" }, [
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Comedy",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.comedy == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.comedy,
+                                    callback: function($$v) {
+                                      _vm.comedy = $$v
+                                    },
+                                    expression: "comedy"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Fantasy",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.fantasy == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.fantasy,
+                                    callback: function($$v) {
+                                      _vm.fantasy = $$v
+                                    },
+                                    expression: "fantasy"
+                                  }
+                                })
+                              ],
+                              1
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "For kids",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.for_kids == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.for_kids,
+                                    callback: function($$v) {
+                                      _vm.for_kids = $$v
+                                    },
+                                    expression: "for_kids"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "History",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.history == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.history,
+                                    callback: function($$v) {
+                                      _vm.history = $$v
+                                    },
+                                    expression: "history"
+                                  }
+                                })
+                              ],
+                              1
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Moral",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.moral == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.moral,
+                                    callback: function($$v) {
+                                      _vm.moral = $$v
+                                    },
+                                    expression: "moral"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Philosophy",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.philosophy == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.philosophy,
+                                    callback: function($$v) {
+                                      _vm.philosophy = $$v
+                                    },
+                                    expression: "philosophy"
+                                  }
+                                })
+                              ],
+                              1
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Religious",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.religious == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.religious,
+                                    callback: function($$v) {
+                                      _vm.religious = $$v
+                                    },
+                                    expression: "religious"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Report",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.report == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.report,
+                                    callback: function($$v) {
+                                      _vm.report = $$v
+                                    },
+                                    expression: "report"
+                                  }
+                                })
+                              ],
+                              1
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Romance",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.romance == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.romance,
+                                    callback: function($$v) {
+                                      _vm.romance = $$v
+                                    },
+                                    expression: "romance"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Thriller",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.thriller == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.thriller,
+                                    callback: function($$v) {
+                                      _vm.thriller = $$v
+                                    },
+                                    expression: "thriller"
+                                  }
+                                })
+                              ],
+                              1
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c(
+                              "td",
+                              [
+                                _c("q-checkbox", {
+                                  staticClass: "category",
+                                  attrs: {
+                                    label: "Youth",
+                                    "true-value": "1",
+                                    "false-value": "0",
+                                    disable:
+                                      this.count3 == 0 && this.youth == "0"
+                                  },
+                                  on: { input: _vm.categoryChecker },
+                                  model: {
+                                    value: _vm.youth,
+                                    callback: function($$v) {
+                                      _vm.youth = $$v
+                                    },
+                                    expression: "youth"
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("td")
+                          ])
+                        ]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "q-stepper-navigation",
+                      [
+                        _c("q-btn", {
+                          attrs: {
+                            color: "secondary",
+                            disable: _vm.step2,
+                            label: "Next"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.$refs.stepper.next()
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("q-btn", {
+                          attrs: {
+                            color: "secondary",
+                            flat: "",
+                            label: "Back"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.$refs.stepper.previous()
+                            }
+                          }
+                        })
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("q-step", { attrs: { title: "Krok 3:" } }, [
+                  _c("h2", [_vm._v("Step 3")]),
                   _vm._v(" "),
                   _c("p", [
                     _vm._v(
-                      "Choose categories, which will describe your book: "
-                    ),
-                    _c(
-                      "span",
-                      {
-                        staticClass: "count3",
-                        class: { green: _vm.green, red: _vm.red }
-                      },
-                      [_vm._v(_vm._s(_vm.count3))]
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "table",
-                      {
-                        staticClass: "categories center",
-                        attrs: { align: "center" }
-                      },
-                      [
-                        _c("tr", { staticClass: "center" }, [
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                staticClass: "category",
-                                attrs: {
-                                  label: "Comedy",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.comedy,
-                                  callback: function($$v) {
-                                    _vm.comedy = $$v
-                                  },
-                                  expression: "comedy"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                staticClass: "category",
-                                attrs: {
-                                  label: "Fantasy",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.fantasy,
-                                  callback: function($$v) {
-                                    _vm.fantasy = $$v
-                                  },
-                                  expression: "fantasy"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "For kids",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.for_kids,
-                                  callback: function($$v) {
-                                    _vm.for_kids = $$v
-                                  },
-                                  expression: "for_kids"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "History",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.history,
-                                  callback: function($$v) {
-                                    _vm.history = $$v
-                                  },
-                                  expression: "history"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "Moral",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.moral,
-                                  callback: function($$v) {
-                                    _vm.moral = $$v
-                                  },
-                                  expression: "moral"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "Philosophy",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.philosophy,
-                                  callback: function($$v) {
-                                    _vm.philosophy = $$v
-                                  },
-                                  expression: "philosophy"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "Religious",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.religious,
-                                  callback: function($$v) {
-                                    _vm.religious = $$v
-                                  },
-                                  expression: "religious"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "Report",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.report,
-                                  callback: function($$v) {
-                                    _vm.report = $$v
-                                  },
-                                  expression: "report"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "Romance",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.romance,
-                                  callback: function($$v) {
-                                    _vm.romance = $$v
-                                  },
-                                  expression: "romance"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "Thriller",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.thriller,
-                                  callback: function($$v) {
-                                    _vm.thriller = $$v
-                                  },
-                                  expression: "thriller"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("tr", [
-                          _c(
-                            "td",
-                            [
-                              _c("q-checkbox", {
-                                attrs: {
-                                  label: "Youth",
-                                  "true-value": "1",
-                                  "false-value": "0"
-                                },
-                                on: { click: _vm.categoryChecker },
-                                model: {
-                                  value: _vm.youth,
-                                  callback: function($$v) {
-                                    _vm.youth = $$v
-                                  },
-                                  expression: "youth"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c("td")
-                        ])
-                      ]
+                      "Yup, that's all. Add your book and let Your imagination run free."
                     )
                   ]),
                   _vm._v(" "),
                   _c(
-                    "q-stepper-navigation",
-                    [
-                      _c("q-btn", {
-                        attrs: {
-                          color: "secondary",
-                          disable: _vm.step2,
-                          label: "Next"
-                        },
-                        on: {
-                          click: function($event) {
-                            _vm.$refs.stepper.next()
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("q-btn", {
-                        attrs: { color: "secondary", flat: "", label: "Back" },
-                        on: {
-                          click: function($event) {
-                            _vm.$refs.stepper.previous()
-                          }
-                        }
-                      })
-                    ],
-                    1
+                    "button",
+                    {
+                      staticClass: "btn btn-primary",
+                      attrs: { type: "submit" }
+                    },
+                    [_vm._v("Add your book")]
                   )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c("q-step", { attrs: { title: "Krok 3:" } }, [
-                _c("h2", [_vm._v("Step 3")]),
-                _vm._v(" "),
-                _c("p", [
-                  _vm._v(
-                    "Yup, that's all. Add your book and let Your imagination run free."
-                  )
-                ]),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  { staticClass: "btn btn-primary", attrs: { type: "submit" } },
-                  [_vm._v("Add your book")]
-                )
-              ])
-            ],
-            1
-          )
-        ],
-        1
-      )
-    ])
+                ])
+              ],
+              1
+            )
+          ],
+          1
+        )
+      ]
+    )
   ])
 }
 var staticRenderFns = []

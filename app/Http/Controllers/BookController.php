@@ -80,7 +80,7 @@ class BookController extends Controller
     {
 
         $this->validate(request(), [
-                'title'         => 'min:2|max:50|string|required',
+                'title'         => 'min:2|max:100|string|required',
                 'description'   => 'min:50|max:1000|string|required'
             ]);
 
@@ -113,7 +113,7 @@ class BookController extends Controller
 
         $book->save();
 
-        return redirect('/books');
+        //return redirect('/books');
 
     }
 
