@@ -21,10 +21,12 @@
                         <input type="hidden" v-model="readed" name="readed" value="0">
                         <input type="hidden" v-model="published" name="published" value="0">
                         <label for="description">Description</label>
-                        <p>Think twice. This description can bring you more readers... or take them away. Max: <span class="count1" v-bind:class="{green: green, red: red}">{{ count1 }}</span></p><br />
+                        <p>Think twice. This description can bring you more readers... or take them away. Max: <span class="count1" v-bind:class="{green: green, red: red}">{{ count1 }}</span></p>
+                        <p>Remember, you need 50 signs at least.</p>
                         <q-input type="textarea" class="description" @keyup="descriptionCount" v-on:change="checkStep1" v-model="description" float-label="description" rows="10" maxlength="1000"/>
 
                     </div>
+
                     <q-stepper-navigation>
                         <q-btn color="secondary" :disable="step1" @click="$refs.stepper.next()" label="Continue" />
                     </q-stepper-navigation>
@@ -106,19 +108,20 @@
                 count1: 1000,
                 count2: 100,
                 count3: 3,
-                green: true,
-                red: false,
+                green: false,
+                red: true,
                 step1: true,
                 step2: true,
                 counter: 0,
-                disable: false
+                disable: false,
+                message: ''
             }
         },
 
         methods: {
             /* changing status of button from the 1 Step to 2 Step */
             checkStep1(){
-                if((this.title.length==0) || (this.description.length == 0)){
+                if((this.title.length<2) || (this.description.length < 50)){
                     return this.step1 = true;
                 } else {
                     return this.step1 = false;
@@ -135,26 +138,26 @@
             /* counting signs in the description field*/
             descriptionCount(){
                 this.checkStep1();
-                if (this.description.length < 1000) {
-                    this.green = true;
-                    this.red = false;
-                    return this.count1 = 1000 - this.description.length;
-                }
-                if (this.description.length == 1000) {
+                if (this.description.length < 50 || this.description.length == 1000) {
                     this.green = false;
                     this.red = true;
+                    return this.count1 = 1000 - this.description.length;
+                }
+                if (this.description.length >= 50 && this.description.length < 1000) {
+                    this.green = true;
+                    this.red = false;
                     return this.count1 = 1000 - this.description.length;
                 }
             },
             /* counting signs in the title field*/
             titleCount(){
                 this.checkStep1();
-                if (this.title.length < 100) {
+                if (this.title.length < 100 && this.title.length >= 2) {
                     this.green = true;
                     this.red = false;
                     return this.count2 = 100 - this.title.length;
                 }
-                if (this.title.length == 100) {
+                if (this.title.length == 100 || this.title.length < 2) {
                     this.green = false;
                     this.red = true;
                     return this.count2 = 100 - this.title.length;
@@ -207,9 +210,9 @@
             onSubmit() {
                 axios.post('/books', this.$data)
                      .then(response => window.location = "/books")
-                     .catch(error => this.$q.notify({
+                     .catch(errors => this.$q.notify({
                             icon: 'warning',
-                            message:'Something is wrong...',
+                            message: this.message,
                             timeout: 0
                             }))
                 }

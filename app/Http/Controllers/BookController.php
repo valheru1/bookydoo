@@ -35,7 +35,7 @@ class BookController extends Controller
     public function store()
     {
        	$this->validate(request(), [
-       			'title' 		=> 'required|min:2|max:50|unique:books|string',
+       			'title' 		=> 'required|min:2|max:100|unique:books|string',
        			'description' 	=> 'required|min:50|max:1000|unique:books|string'
        		]);
 
@@ -45,21 +45,33 @@ class BookController extends Controller
         $book->description = request('description');
         $book->author_id = request('author_id');
 
-        if(request('comedy')==null) { $book->comedy = 0; } else { $book->comedy = 1; }
-        if(request('fantasy')==null) { $book->fantasy = 0; } else { $book->fantasy = 1; }
-        if(request('for_kids')==null) { $book->for_kids = 0; } else { $book->for_kids = 1; }
-        if(request('history')==null) { $book->history = 0; } else { $book->history = 1; }
-        if(request('moral')==null) { $book->moral = 0; } else { $book->moral = 1; }
-        if(request('philosophy')==null) { $book->philosophy = 0; } else { $book->philosophy = 1; }
-        if(request('religious')==null) { $book->religious = 0; } else { $book->religious = 1; }
-        if(request('report')==null) { $book->report = 0; } else { $book->report = 1; }
-        if(request('romance')==null) { $book->romance = 0; } else { $book->romance = 1; }
-        if(request('thriller')==null) { $book->thriller = 0; } else { $book->thriller = 1; }
-        if(request('youth')==null) { $book->youth = 0; } else { $book->youth = 1; }
+        // if(request('comedy')==null || request('comedy')=='') { $book->comedy = 0; } else { $book->comedy = 1; }
+        // if(request('fantasy')==null) { $book->fantasy = 0; } else { $book->fantasy = 1; }
+        // if(request('for_kids')==null) { $book->for_kids = 0; } else { $book->for_kids = 1; }
+        // if(request('history')==null) { $book->history = 0; } else { $book->history = 1; }
+        // if(request('moral')==null) { $book->moral = 0; } else { $book->moral = 1; }
+        // if(request('philosophy')==null) { $book->philosophy = 0; } else { $book->philosophy = 1; }
+        // if(request('religious')==null) { $book->religious = 0; } else { $book->religious = 1; }
+        // if(request('report')==null) { $book->report = 0; } else { $book->report = 1; }
+        // if(request('romance')==null) { $book->romance = 0; } else { $book->romance = 1; }
+        // if(request('thriller')==null) { $book->thriller = 0; } else { $book->thriller = 1; }
+        // if(request('youth')==null) { $book->youth = 0; } else { $book->youth = 1; }
+
+        $book->comedy   =   request('comedy');
+        $book->fantasy  =   request('fantasy');
+        $book->for_kids =   request('for_kids');
+        $book->history  =   request('history');
+        $book->moral    =   request('moral');
+        $book->philosophy = request('philosophy');
+        $book->religious =  request('religious');
+        $book->report   =   request('report');
+        $book->romance  =   request('romance');
+        $book->thriller =   request('thriller');
+        $book->youth    =   request('youth');
 
        	$book->save();
-        flash('Book added')->success();
-      	return redirect('/books');
+        // flash('Book added')->success();
+      	// return redirect('/books');
     }
 
     public function edit($id)

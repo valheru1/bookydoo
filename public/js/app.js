@@ -37838,6 +37838,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'app',
@@ -37864,12 +37866,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             count1: 1000,
             count2: 100,
             count3: 3,
-            green: true,
-            red: false,
+            green: false,
+            red: true,
             step1: true,
             step2: true,
             counter: 0,
-            disable: false
+            disable: false,
+            message: ''
         };
     },
 
@@ -37877,7 +37880,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     methods: {
         /* changing status of button from the 1 Step to 2 Step */
         checkStep1: function checkStep1() {
-            if (this.title.length == 0 || this.description.length == 0) {
+            if (this.title.length < 2 || this.description.length < 50) {
                 return this.step1 = true;
             } else {
                 return this.step1 = false;
@@ -37896,14 +37899,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         /* counting signs in the description field*/
         descriptionCount: function descriptionCount() {
             this.checkStep1();
-            if (this.description.length < 1000) {
-                this.green = true;
-                this.red = false;
-                return this.count1 = 1000 - this.description.length;
-            }
-            if (this.description.length == 1000) {
+            if (this.description.length < 50 || this.description.length == 1000) {
                 this.green = false;
                 this.red = true;
+                return this.count1 = 1000 - this.description.length;
+            }
+            if (this.description.length >= 50 && this.description.length < 1000) {
+                this.green = true;
+                this.red = false;
                 return this.count1 = 1000 - this.description.length;
             }
         },
@@ -37911,12 +37914,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         /* counting signs in the title field*/
         titleCount: function titleCount() {
             this.checkStep1();
-            if (this.title.length < 100) {
+            if (this.title.length < 100 && this.title.length >= 2) {
                 this.green = true;
                 this.red = false;
                 return this.count2 = 100 - this.title.length;
             }
-            if (this.title.length == 100) {
+            if (this.title.length == 100 || this.title.length < 2) {
                 this.green = false;
                 this.red = true;
                 return this.count2 = 100 - this.title.length;
@@ -37972,10 +37975,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             axios.post('/books', this.$data).then(function (response) {
                 return window.location = "/books";
-            }).catch(function (error) {
+            }).catch(function (errors) {
                 return _this.$q.notify({
                     icon: 'warning',
-                    message: 'Something is wrong...',
+                    message: _this.message,
                     timeout: 0
                 });
             });
@@ -38145,7 +38148,10 @@ var render = function() {
                             [_vm._v(_vm._s(_vm.count1))]
                           )
                         ]),
-                        _c("br"),
+                        _vm._v(" "),
+                        _c("p", [
+                          _vm._v("Remember, you need 50 signs at least.")
+                        ]),
                         _vm._v(" "),
                         _c("q-input", {
                           staticClass: "description",
