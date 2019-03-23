@@ -28,6 +28,11 @@
         <main class="py-4">
             <div id="app">
                 @yield('content')
+                @if (!empty($message))
+                    <notification message-type="{{message-type}}" message="{{ $message }}"></notification>
+
+                @endif
+
             </div>
         </main>
 

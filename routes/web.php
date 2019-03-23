@@ -25,8 +25,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::resource('books', 'BookController');
+Route::resource('books', 'BookController')->middleware('auth');
 
-Route::get('/books/{id}/write', 'BookController@write');
+Route::get('/books/{id}/write', 'BookController@write')->middleware('auth');
 
-Route::get('/books/{id}/write/{chapter}', 'BookController@write');
+Route::get('/books/{id}/write/{chapter}', 'BookController@write')->middleware('auth');
