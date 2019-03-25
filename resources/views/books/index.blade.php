@@ -7,9 +7,9 @@
             <div class="row">
 
                 @foreach($books as $book)
-                    <div class="col-md-4 col-md-offset-1">
-                            <div class="card" style="width: 18rem;">
-                                    <div class="card-header">
+                    <div id="books">
+                        <div class="card">
+                                   <div class="card-header">
                                             {{ $book->title }}
                                         </div>
                                 <div class="card-body">
@@ -18,7 +18,7 @@
                                     {{ $book->description }}
                                 </div>
                                 @if($id==$book->author_id)
-                                    <div class="panel-footer"><a href="/books/{{$book->id}}/write/last">Write this book</a><a href="/books/{{$book->id}}/edit">Edit</a></div>
+                                    <div class="panel-footer"><a href="/books/{{$book->id}}/write/last" class="card-link">Write this book</a><a href="/books/{{$book->id}}/edit" class="card-link" style="float: right;">Edit</a></div>
                                 @endif
                             </div>
                             </div>

@@ -1,0 +1,17 @@
+#books .card {
+    margin: 5px;
+    float: left;
+    overflow: hidden;
+    max-width: 17rem;
+    border-color:black;
+}
+
+#books .card-header{
+    color: white;
+    background-color: #E2182D;
+    text-transform: uppercase;
+}
+
+#books .row {
+    background-color: white;
+}

@@ -1,4 +1,22 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);.navbar-laravel {
+@import url(https://fonts.googleapis.com/css?family=Nunito);#books .card {
+  margin: 5px;
+  float: left;
+  overflow: hidden;
+  max-width: 17rem;
+  border-color: black;
+}
+
+#books .card-header {
+  color: white;
+  background-color: #E2182D;
+  text-transform: uppercase;
+}
+
+#books .row {
+  background-color: white;
+}
+
+.navbar-laravel {
   background-color: #fff;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
