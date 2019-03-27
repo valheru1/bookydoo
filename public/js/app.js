@@ -457,6 +457,115 @@ function toComment(sourceMap) {
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11419,10 +11528,10 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(19).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(19).setImmediate))
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 var g;
@@ -11449,7 +11558,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -11808,7 +11917,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
@@ -11816,7 +11925,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(39)
 }
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(42)
 /* template */
@@ -11856,115 +11965,6 @@ if (false) {(function () {
 })()}
 
 module.exports = Component.exports
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
 
 
 /***/ }),
@@ -12520,7 +12520,7 @@ function injectStyle (ssrContext) {
   if (disposed) return
   __webpack_require__(44)
 }
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(46)
 /* template */
@@ -12835,7 +12835,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(18);
-module.exports = __webpack_require__(72);
+module.exports = __webpack_require__(75);
 
 
 /***/ }),
@@ -12844,7 +12844,7 @@ module.exports = __webpack_require__(72);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_quasar_extras_roboto_font__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_quasar_extras_roboto_font___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_quasar_extras_roboto_font__);
@@ -12984,7 +12984,7 @@ window.axios = __webpack_require__(50);
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.prototype.$http = window.axios;
 
-window.Vue = __webpack_require__(2);
+window.Vue = __webpack_require__(3);
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_3_quasar_framework_dist_quasar_mat_esm_js__["G" /* default */]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -12993,9 +12993,10 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_3_quas
  */
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue'));
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('login', __webpack_require__(5));
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('login', __webpack_require__(6));
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('register', __webpack_require__(11));
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('addbook', __webpack_require__(69));
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('editbook', __webpack_require__(72));
 
 var app = new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
 
@@ -13070,7 +13071,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
 /* 20 */
@@ -13263,7 +13264,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4), __webpack_require__(8)))
 
 /***/ }),
 /* 21 */
@@ -13287,7 +13288,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(4)(content, options);
+var update = __webpack_require__(5)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -13471,7 +13472,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(4)(content, options);
+var update = __webpack_require__(5)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -33570,7 +33571,7 @@ var index_esm = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_router__ = __webpack_require__(38);
 
@@ -33592,11 +33593,11 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vue_
     mode: 'history',
     routes: [{
         path: '/',
-        component: __webpack_require__(5)
+        component: __webpack_require__(6)
 
     }, {
         path: '/login',
-        component: __webpack_require__(5)
+        component: __webpack_require__(6)
     }, {
         path: '*'
         //                component: require('Error404')
@@ -36785,7 +36786,7 @@ var transform;
 var options = {}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(4)(content, options);
+var update = __webpack_require__(5)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -37708,7 +37709,7 @@ module.exports = function spread(callback) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(6)
+var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(70)
 /* template */
@@ -37729,7 +37730,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources\\assets\\js\\components\\Addbook.vue"
+Component.options.__file = "resources\\assets\\js\\components\\books\\Addbook.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -37738,9 +37739,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-51e7ace3", Component.options)
+    hotAPI.createRecord("data-v-78b301f1", Component.options)
   } else {
-    hotAPI.reload("data-v-51e7ace3", Component.options)
+    hotAPI.reload("data-v-78b301f1", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -37756,7 +37757,6 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
 //
 //
 //
@@ -38158,7 +38158,7 @@ var render = function() {
                           attrs: {
                             type: "textarea",
                             "float-label": "description",
-                            rows: "10",
+                            rows: "1",
                             maxlength: "1000"
                           },
                           on: {
@@ -38588,12 +38588,560 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-51e7ace3", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-78b301f1", module.exports)
   }
 }
 
 /***/ }),
 /* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(73)
+/* template */
+var __vue_template__ = __webpack_require__(74)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\books\\Editbook.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-9b5c54c8", Component.options)
+  } else {
+    hotAPI.reload("data-v-9b5c54c8", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 73 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: 'app',
+    props: ['author', 'book_id', 'book_title', 'book_description', 'book_comedy', 'book_fantasy', 'book_for_kids', 'book_history', 'book_moral', 'book_philosophy', 'book_religious', 'book_report', 'book_romance', 'book_thriller', 'book_youth'],
+    data: function data() {
+        return {
+            title: this.book_title,
+            id: this.book_id,
+            author_id: this.author,
+            readed: 0,
+            published: 0,
+            description: this.book_description,
+            comedy: this.book_comedy,
+            for_kids: this.book_for_kids,
+            fantasy: this.book_fantasy,
+            history: this.book_history,
+            moral: this.book_moral,
+            philosophy: this.book_philosophy,
+            religious: this.book_religious,
+            report: this.book_report,
+            romance: this.book_romance,
+            thriller: this.book_thriller,
+            youth: this.book_youth,
+            errors: {},
+            count1: 1000,
+            count2: 100,
+            count3: 3,
+            green: false,
+            red: true,
+            step1: true,
+            step2: true,
+            counter: 0,
+            disable: false,
+            message: ''
+        };
+    },
+
+
+    methods: {
+        /* changing status of button from the 1 Step to 2 Step */
+        checkStep1: function checkStep1() {
+            if (this.title.length < 2 || this.description.length < 50) {
+                return this.step1 = true;
+            } else {
+                return this.step1 = false;
+            }
+        },
+
+        /* changing status of button from the 2 Step to 3 Step */
+        checkStep2: function checkStep2() {
+            if (this.count3 >= 3) {
+                return this.step2 = true;
+            } else {
+                return this.step2 = false;
+            }
+        },
+
+        /* counting signs in the description field*/
+        descriptionCount: function descriptionCount() {
+            this.checkStep1();
+            if (this.description.length < 50 || this.description.length == 1000) {
+                this.green = false;
+                this.red = true;
+                return this.count1 = 1000 - this.description.length;
+            }
+            if (this.description.length >= 50 && this.description.length < 1000) {
+                this.green = true;
+                this.red = false;
+                return this.count1 = 1000 - this.description.length;
+            }
+        },
+
+        /* counting signs in the title field*/
+        titleCount: function titleCount() {
+            this.checkStep1();
+            if (this.title.length < 100 && this.title.length >= 2) {
+                this.green = true;
+                this.red = false;
+                return this.count2 = 100 - this.title.length;
+            }
+            if (this.title.length == 100 || this.title.length < 2) {
+                this.green = false;
+                this.red = true;
+                return this.count2 = 100 - this.title.length;
+            }
+        },
+
+        /* checking what category is selected and let select just 3 of them */
+        categoryChecker: function categoryChecker() {
+
+            if (this.count3 >= 0) {
+                this.counter = 0;
+
+                if (this.comedy == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.for_kids == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.fantasy == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.history == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.moral == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.philosophy == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.religious == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.report == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.romance == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.thriller == '1') {
+                    this.counter = this.counter + 1;
+                }
+                if (this.youth == '1') {
+                    this.counter = this.counter + 1;
+                }
+                this.count3 = 3 - this.counter;
+                this.checkStep2();
+                return this.count3;
+            }
+        },
+        onSubmit: function onSubmit() {
+            var _this = this;
+
+            axios.post('/books', this.$data).then(function (response) {
+                return window.location = "/books";
+            }).catch(function (errors) {
+                return _this.$q.notify({
+                    icon: 'warning',
+                    message: _this.message,
+                    timeout: 0
+                });
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { attrs: { id: "books" } }, [
+      _c("div", { staticClass: "white" }, [
+        _c("h4", [_vm._v("Edit your book")]),
+        _vm._v(" "),
+        _c("form", { attrs: { method: "post", action: "/books/{id}" } }, [
+          _c("div", { staticClass: "form-group" }, [
+            _c(
+              "p",
+              [
+                _c("label", { attrs: { for: "Title" } }, [
+                  _vm._v("Here You can edit your title")
+                ]),
+                _vm._v(" "),
+                _c("q-input", {
+                  staticClass: "title center",
+                  attrs: { id: "title", name: "title", maxlength: "100" },
+                  model: {
+                    value: _vm.title,
+                    callback: function($$v) {
+                      _vm.title = $$v
+                    },
+                    expression: "title"
+                  }
+                })
+              ],
+              1
+            )
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "form-group" },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.author_id,
+                    expression: "author_id"
+                  }
+                ],
+                attrs: { type: "hidden", name: "author_id" },
+                domProps: { value: _vm.author_id },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.author_id = $event.target.value
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _vm._m(0),
+              _vm._v(" "),
+              _c("br"),
+              _vm._v(" "),
+              _c("label", { attrs: { for: "description" } }, [
+                _vm._v(
+                  "There you can edit your description, of course if you want."
+                )
+              ]),
+              _vm._v(" "),
+              _c("span", { staticClass: "count1" }, [_vm._v("1000")]),
+              _vm._v(" "),
+              _c(
+                "q-field",
+                [
+                  _c("q-input", {
+                    staticClass: "description",
+                    attrs: { type: "textarea", rows: "1" },
+                    on: { keyup: _vm.descriptionCount, change: _vm.checkStep1 },
+                    model: {
+                      value: _vm.description,
+                      callback: function($$v) {
+                        _vm.description = $$v
+                      },
+                      expression: "description"
+                    }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _vm._m(1),
+          _vm._v(" "),
+          _vm._m(2),
+          _vm._v(" "),
+          _vm._m(3)
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("p", [
+      _c("label", { attrs: { for: "published" } }, [_vm._v("Publish")]),
+      _vm._v(" "),
+      _c("input", {
+        attrs: { type: "checkbox", name: "published", value: "0" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("p", [
+      _vm._v("Choose categories, which will describe your book: "),
+      _c("span", { staticClass: "count" }, [_vm._v("3")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group" }, [
+      _c(
+        "table",
+        { staticClass: "text-center categories", attrs: { align: "center" } },
+        [
+          _c("tr", [
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "comedy" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("comedy")]),
+            _vm._v(" "),
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "fantasy" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("fantasy")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "for_kids" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("for kids")]),
+            _vm._v(" "),
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "history" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("history")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "moral" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("moral")]),
+            _vm._v(" "),
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "philosophy" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("philosophy")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "religious" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("religious")]),
+            _vm._v(" "),
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "report" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("report")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "romance" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("romance")]),
+            _vm._v(" "),
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "thriller" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("thriller")])
+          ]),
+          _vm._v(" "),
+          _c("tr", [
+            _c("td", { staticClass: "checkbox_field" }, [
+              _c("input", {
+                staticClass: "category",
+                attrs: { type: "checkbox", name: "youth" }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", { staticClass: "category" }, [_vm._v("youth")])
+          ])
+        ]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-center" }, [
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [_vm._v("Save changes")]
+      )
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-9b5c54c8", module.exports)
+  }
+}
+
+/***/ }),
+/* 75 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

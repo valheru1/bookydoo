@@ -225,7 +225,8 @@ Vue.use(Quasar);
 // Vue.component('example-component', require('./components/ExampleComponent.vue'));
 Vue.component('login', require('./components/Login.vue'));
 Vue.component('register', require('./components/Register.vue'));
-Vue.component('addbook', require('./components/Addbook.vue'));
+Vue.component('addbook', require('./components/books/Addbook.vue'));
+Vue.component('editbook', require('./components/books/Editbook.vue'));
 
 const app = new Vue({
 

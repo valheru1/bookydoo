@@ -23,8 +23,7 @@
                         <label for="description">Description</label>
                         <p>Think twice. This description can bring you more readers... or take them away. Max: <span class="count1" v-bind:class="{green: green, red: red}">{{ count1 }}</span></p>
                         <p>Remember, you need 50 signs at least.</p>
-                        <q-input type="textarea" class="description" @keyup="descriptionCount" v-on:change="checkStep1" v-model="description" float-label="description" rows="10" maxlength="1000"/>
-
+                        <q-input type="textarea" class="description" @keyup="descriptionCount" v-on:change="checkStep1" v-model="description" float-label="description" rows="1" maxlength="1000"/>
                     </div>
 
                     <q-stepper-navigation>

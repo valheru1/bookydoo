@@ -1,3 +1,7 @@
+#books h4{
+    color: #011E33 !important;
+}
+
 #books .card {
     margin: 5px;
     float: left;
@@ -12,6 +16,12 @@
     text-transform: uppercase;
 }
 
-#books .row {
+#books .white {
     background-color: white;
+    padding: 5px;
+    text-align: center;
+}
+
+#books .btn-primary {
+
 }

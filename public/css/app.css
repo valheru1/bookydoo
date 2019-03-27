@@ -1,4 +1,8 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);#books .card {
+@import url(https://fonts.googleapis.com/css?family=Nunito);#books h4 {
+  color: #011E33 !important;
+}
+
+#books .card {
   margin: 5px;
   float: left;
   overflow: hidden;
@@ -12,8 +16,10 @@
   text-transform: uppercase;
 }
 
-#books .row {
+#books .white {
   background-color: white;
+  padding: 5px;
+  text-align: center;
 }
 
 .navbar-laravel {
@@ -135,6 +141,7 @@ nav {
   width: 55rem;
   text-align: center;
   margin: 0 auto;
+  min-height: 22px !important;
 }
 
 .green {
