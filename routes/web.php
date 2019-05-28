@@ -30,3 +30,5 @@ Route::resource('books', 'BookController')->middleware('auth');
 Route::get('/books/{id}/write', 'BookController@write')->middleware('auth');
 
 Route::get('/books/{id}/write/{chapter}', 'BookController@write')->middleware('auth');
+
+Route::post('/books/{id}/addchapter', 'ChapterController@store')->middleware('auth');
